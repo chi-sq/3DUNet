@@ -20,8 +20,8 @@ class kidney_Loader(Dataset):
     # 把CT的HU值归一化到0-1
     def normalize(self, volume):
         """Normalize the volume"""
-        min = -1024.0
-        max = 1413.0
+        min = -50
+        max = 200
         volume[volume < min] = min
         volume[volume > max] = max
         volume = (volume - min) / (max - min)
