@@ -233,20 +233,6 @@ class UNet3D_BN(nn.Module):
 if __name__ == "__main__":
     # input size (N, C_in, D, H, W)
     x = torch.rand((1,1,128,128,128))
-    # x = torch.rand((2, 1, 64, 64, 64))
     model = UNet3D_BN(1, 3)
     output = model(x)
-    print(output.shape)  # torch.Size([2, 3, 64, 64, 64])
-
-# print(type(model.parameters()))
-# print(model.parameters())
-# for para_m1, para_m2 in zip(model.parameters(), model.parameters()):
-#     print(para_m1, para_m2, sep='\n***********')
-#     print(para_m1.shape, para_m2.shape)
-#     break
-# print(model.state_dict().keys())
-# print(type(model.state_dict().keys()))
-# for i in range(len(list(model.state_dict().keys()))):
-#     print(list(model.state_dict().keys())[i])
-#     print(list(model.state_dict().values())[i])
-# # print(model.state_dict().values())
+    print(output.shape)  
