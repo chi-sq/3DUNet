@@ -26,22 +26,20 @@ def val(loader, model, if_save_eva_index=None, csv_path='index/evaluation.csv'):
         with torch.no_grad():
             # In the segmentation, a value of 0 represents background, 1 represents kidney, and 2 represents tumor.
             y = y.squeeze(1).permute(1, 2, 3, 0).squeeze(3).to(
-                'cpu').numpy()  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引 label [128,128,128,1]
-            # print("y.max(),y.min()",y.max(),y.min())
-            output = model(x)  # 没有softmax 在channel维度归一化(B,C,H,W,D)
+                'cpu').numpy()  
+            
+            output = model(x)  
             output = output.squeeze(0).permute(1, 2, 3, 0)  # [H,W,D,C]
             F = nn.Softmax(dim=-1)
             output = F(output).to('cpu').numpy()
             output = np.argmax(output, axis=-1)  # [HWD]
-            # max,min = output.max(),output.min()
-            # print(max, min)
+            
             predictions = output
 
             if not np.issubdtype(predictions.dtype, np.integer):
                 predictions = np.round(predictions)
             predictions = predictions.astype(np.uint8)
-
-            # print("predictions.max(),predictions.min()",predictions.max(),predictions.min())
+            
             # Compute tumor+kidney Dice
             tk_pd = np.greater(predictions, 0)
             tk_gt = np.greater(y, 0)
@@ -60,7 +58,7 @@ def val(loader, model, if_save_eva_index=None, csv_path='index/evaluation.csv'):
 
             tk_dice_list.append(tk_dice)
             tu_dice_list.append(tu_dice)
-            # 每次迭代打印dice系数的动态平均值
+            
             loop_val.set_postfix(
                 tk_dice=np.mean(tk_dice_list).item(),
                 tu_dice=np.mean(tu_dice_list).item()
