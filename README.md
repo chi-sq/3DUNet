@@ -1,3 +1,6 @@
+# Result
+![image](result/seg_predict.png)
+
 # Data --> KiTS19
 
 Here is the official [2019 KiTS Challenge](https://kits19.grand-challenge.org) repository.
