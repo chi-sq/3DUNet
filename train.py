@@ -40,11 +40,11 @@ def train_fn(
 
         if lossopt == 'Cross Entropy loss':  # -log(p_t)
             # y = y.squeeze(1)
-            y = y.squeeze(1).permute(1, 2, 3, 0).view(-1)  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引
+            y = y.squeeze(1).permute(1, 2, 3, 0).view(-1)  
             output = output.permute(0, 2, 3, 4, 1).view(-1, 3)
             Loss = CE_loss(output, y)
         elif lossopt == 'Focal loss':  # -(1-p_t)^r * log(p_t)   # Loss = Focal_loss(output, y)
-            y = y.squeeze(1).permute(1, 2, 3, 0).view(-1, 1)  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引
+            y = y.squeeze(1).permute(1, 2, 3, 0).view(-1, 1)  
             output = output.permute(0, 2, 3, 4, 1).view(-1, 3)
             target, input = y, output
             logpt = F.log_softmax(input, -1)
@@ -55,7 +55,7 @@ def train_fn(
             Loss = loss.mean()
         elif lossopt == 'Dice loss':
             y = y.squeeze(1).permute(1, 2, 3, 0).squeeze(
-                3)  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引 label [128,128,128,1]
+                3)  
             output = output.squeeze(0).permute(1, 2, 3, 0)  # [H,W,D,C]
             f = nn.Softmax(dim=-1)
             output = torch.argmax(f(output), -1)  # [HWD]
@@ -63,11 +63,11 @@ def train_fn(
             predictions = predictions.type(torch.uint8)
             Loss = Dice_loss(predictions, y)
         elif lossopt == 'Mixed CE loss and Dice loss':
-            y_1 = y.squeeze(1).permute(1, 2, 3, 0).view(-1)  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引
+            y_1 = y.squeeze(1).permute(1, 2, 3, 0).view(-1)  
             output_1 = output.permute(0, 2, 3, 4, 1).view(-1, 3)
 
             y_2 = y.squeeze(1).permute(1, 2, 3, 0).squeeze(
-                3)  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引 label [128,128,128,1]
+                3)  # label [128,128,128,1]
             output_2 = output.squeeze(0).permute(1, 2, 3, 0)  # [H,W,D,C]
             f = nn.Softmax(dim=-1)
             output_2 = torch.argmax(f(output_2), -1)  # [HWD]
@@ -76,7 +76,7 @@ def train_fn(
 
             lambda_ratio = 2
             CE = CE_loss(output_1, y_1)
-            DICE = lambda_ratio * Dice_loss(predictions, y_2, lambda_tk=1, lambda_tu=1)  # dice loss works
+            DICE = lambda_ratio * Dice_loss(predictions, y_2, lambda_tk=1, lambda_tu=1)  
             Loss = CE + DICE
 
         LOSS += Loss.item()
@@ -108,22 +108,18 @@ def val(
         with torch.no_grad():
             # In the segmentation, a value of 0 represents background, 1 represents kidney, and 2 represents tumor.
             y = y.squeeze(1).permute(1, 2, 3, 0).squeeze(3).to(
-                'cpu').numpy()  # [1,128,128,128] # y value is 0,1,2 代表对应的类别的索引 label [128,128,128,1]
-            # print("y.max(),y.min()",y.max(),y.min())
-            output = model(x)  # 没有softmax 在channel维度归一化(B,C,H,W,D)
+                'cpu').numpy()  
+            output = model(x)  
             output = output.squeeze(0).permute(1, 2, 3, 0)  # [H,W,D,C]
             F = nn.Softmax(dim=-1)
             output = F(output).to('cpu').numpy()
             output = np.argmax(output, axis=-1)  # [HWD]
-            # max, min = output.max(), output.min()
-            # print(max, min)
             predictions = output
 
             if not np.issubdtype(predictions.dtype, np.integer):
                 predictions = np.round(predictions)
             predictions = predictions.astype(np.uint8)
-
-            # print("predictions.max(),predictions.min()", predictions.max(), predictions.min())
+        
             # Compute tumor+kidney Dice
             tk_pd = np.greater(predictions, 0)
             tk_gt = np.greater(y, 0)
@@ -140,12 +136,12 @@ def val(
 
             tk_dice_list.append(tk_dice)
             tu_dice_list.append(tu_dice)
+        
             # 每次迭代打印dice系数的动态平均值
             loop_val.set_postfix(
                 tk_dice=np.mean(tk_dice_list).item(),
                 tu_dice=np.mean(tu_dice_list).item()
             )
-    print('validation ending--')
     print(f'tk_dice = {np.mean(tk_dice_list)},tu_dice = {np.mean(tu_dice_list)}')
     if if_save_eva_index:
         data = pd.DataFrame({"tk_dice": tk_dice_list, "tu_dice": tu_dice_list})
