@@ -13,9 +13,8 @@ import pandas as pd
 import os
 torch.backends.cudnn.benchmark = True
 
-def crop(image):  # image refers to segmentaiotn
+def crop(image):  
     D, H, W = image.shape  # (611,512,512) 轴 冠 shi
-    # H维度crop
     for k in range(D - 1):
         if image[k, :, :].max() > 0:
             top = k
@@ -42,8 +41,6 @@ def crop(image):  # image refers to segmentaiotn
             break
     return top, bottom, left, right, forward, backward
 
-
-# 把CT的HU值归一化到0-1
 def normalize(volume):
     """Normalize the volume"""
     # set different HU value according to ROI
