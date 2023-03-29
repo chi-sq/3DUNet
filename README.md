@@ -1,6 +1,6 @@
 # Data --> KiTS19
 
-The official [2019 KiTS Challenge](https://kits19.grand-challenge.org) repository.
+Here is the official [2019 KiTS Challenge](https://kits19.grand-challenge.org) repository.
 
 ## Usage
 
@@ -29,8 +29,8 @@ data
 ```
 And the you can divide them to train and validation datesets.
 
-### Loading Data
+###  Data description
 In the segmentation, a value of 0 represents background, 1 represents kidney, and 2 represents tumor.
 
-
-
+### Tutorial
+You can move to ```text 3DUNet_Tutorial.ipynb``` to run this repository.
