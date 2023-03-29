@@ -22,7 +22,6 @@ class kidney_Loader(Dataset):
     # 自动进行crop
     def crop(self, image):  # image refers to segmentaiotn
         D, H, W = image.shape  # (611,512,512) 轴、冠、矢位
-        # H维度crop
         for k in range(D - 1):
             if image[k, :, :].max() > 0:
                 top = k
