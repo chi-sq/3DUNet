@@ -11,16 +11,17 @@ import torch
 
 class kidney_Loader(Dataset):
     def __init__(self, data_path):
-        # 初始化函数，读取所有data_path下的case
+        # data_path--->数据的路径
         self.data_path = data_path
         self.imgs_path = os.listdir(self.data_path)
         self.transforms = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5), (0.5))])
 
     def augment(self, image):
         pass
-
+    
+    # 自动进行crop
     def crop(self, image):  # image refers to segmentaiotn
-        D, H, W = image.shape  # (611,512,512) 轴 冠 shi
+        D, H, W = image.shape  # (611,512,512) 轴、冠、矢位
         # H维度crop
         for k in range(D - 1):
             if image[k, :, :].max() > 0:
@@ -48,7 +49,7 @@ class kidney_Loader(Dataset):
                 break
         return top, bottom, left, right, forward, backward
 
-    # 把CT的HU值归一化到0-1
+    # window clip and normalization
     def normalize(self, volume):
         """Normalize the volume"""
         # set different HU value according to ROI
@@ -63,7 +64,6 @@ class kidney_Loader(Dataset):
         return volume
 
     def __getitem__(self, index):
-        # 根据index读取图片
         image_path = self.imgs_path[index]
         image = nib.load(os.path.join(self.data_path, image_path, 'imaging.nii.gz'))
         seg = nib.load(os.path.join(self.data_path, image_path, 'segmentation.nii.gz'))
@@ -80,7 +80,6 @@ class kidney_Loader(Dataset):
         seg = resize_volume(seg)
         # normalize
         image = self.normalize(image)
-        # seg = self.normalize(seg) #不需要normalize
         # 转换成tensor 然后加入channel维度
         image = self.transforms(image).unsqueeze(0)
         seg = torch.from_numpy(seg).unsqueeze(0)
@@ -88,13 +87,10 @@ class kidney_Loader(Dataset):
         return image, seg
 
     def __len__(self):
-        # 返回训练集大小
         return len(self.imgs_path)
 
-# train_data = kidney_Loader('./data/val')
-# a = DataLoader(train_data, batch_size=1, shuffle=False)
-# for i,(image, target) in enumerate(a):
-#     print(image.shape, target.shape)
-#     print(f'{i} th sample')
-#     print(image.max(), image.min())  # torch.Size([2, 1, 128, 128, 128]) torch.Size([2, 1, 128, 128, 128])
-#     print(target.max(),target.min())
+if __name__ == "__main__":
+    train_data = kidney_Loader('./data/val')
+    a = DataLoader(train_data, batch_size=1, shuffle=False)
+    for i,(image, target) in enumerate(a):
+        print(image.shape, target.shape)
