@@ -33,4 +33,4 @@ And the you can divide them to train and validation datesets.
 In the segmentation, a value of 0 represents background, 1 represents kidney, and 2 represents tumor.
 
 ### Tutorial
-You can move to ```text 3DUNet_Tutorial.ipynb``` to run this repository.
+You can move to ``` 3DUNet_Tutorial.ipynb``` to run this repository.
