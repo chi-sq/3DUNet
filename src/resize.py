@@ -11,20 +11,12 @@ def resize_volume(img, desired_depth=128, desired_width=128, desired_height=128)
     current_depth = img.shape[0]
     current_width = img.shape[-1]
     current_height = img.shape[1]
-    # print("current_depth", current_depth)
-    # print("current_width", current_width)
-    # print("current_height", current_height)
-    # Compute depth factor
-    # depth = current_depth / desired_depth
-    # width = current_width / desired_width
-    # height = current_height / desired_height
+    
     depth_factor = desired_depth / current_depth
     width_factor = desired_width / current_width
     height_factor = desired_height / current_height
 
-    # Bilinear interpolation would be order=1,
-    # nearest is order=0,
-    # and cubic is the default (order=3).
+    # Bilinear interpolation would be order=1,nearest is order=0, and cubic is the default (order=3).
     if img.max() == 2 or img.max() == 1:  # for seg
         img = ndimage.zoom(img, (depth_factor, height_factor, width_factor), order=0)  # we use order=0
     else:  # for image
