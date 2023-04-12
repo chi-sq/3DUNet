@@ -4,7 +4,7 @@
 import torch
 import torch.nn as nn
 
-
+# without BN
 class UNet3D(nn.Module):
     def __init__(self, in_channel, n_classes):
         self.in_channel = in_channel
@@ -117,6 +117,7 @@ class UNet3D(nn.Module):
         d0 = self.dc0(d1)
         return d0
 
+# with BN
 class UNet3D_BN(nn.Module):
 
     def __init__(self, in_channel, n_classes, use_batch_norm=True):
