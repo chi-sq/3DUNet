@@ -1,5 +1,5 @@
+tqmd
 pillow
 nibabel
 imageio
 requests
-tqdm
