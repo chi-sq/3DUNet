@@ -1,5 +1,8 @@
 # Result
+### Result from 3D_sclier
 ![image](result/seg_predict.png)
+### Result GUI from scratch
+![image](result/res_gui.png)
 
 # Data --> KiTS19
 
